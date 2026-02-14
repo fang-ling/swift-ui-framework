@@ -30,7 +30,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/fang-ling/foundation-framework",
-      from: "3.0.0"
+      from: "4.0.0"
     )
   ],
   targets: [
