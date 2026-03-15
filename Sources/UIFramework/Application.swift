@@ -1,10 +1,8 @@
-// swift-tools-version: 6.2
-
 //
-//  Package.swift
+//  Application.swift
 //  ui-framework
 //
-//  Created by Fang Ling on 2025/12/28.
+//  Created by Fang Ling on 2026/3/15.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -18,25 +16,3 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-
-import PackageDescription
-
-let dependencies = [
-  ("https://github.com/fang-ling/foundation-framework", "main")
-]
-
-let package = Package(
-  name: "ui-framework",
-  products: [
-    .library(name: "UIFramework", targets: ["UIFramework"])
-  ],
-  dependencies: dependencies.map({ .package(url: $0.0, branch: $0.1) }),
-  targets: [
-    .target(
-      name: "UIFramework",
-      dependencies: [
-        .product(name: "FoundationFramework", package: "foundation-framework")
-      ]
-    )
-  ]
-)
