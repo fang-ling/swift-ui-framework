@@ -23,6 +23,7 @@ set -euo pipefail
 
 SWIFT=~"/.swiftly/bin/swift"
 SWIFT_SDK="DEVELOPMENT-SNAPSHOT-2026-03-09-a-wasm32-unknown-wasip1-threads"
+SWIFT_BRIDGING_HEADER="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
 
 $SWIFT build \
   -c release \
@@ -30,7 +31,8 @@ $SWIFT build \
   -Xswiftc -static-stdlib \
   -Xswiftc -Xclang-linker \
   -Xswiftc -mexec-model=reactor \
-  -Xlinker --export-if-defined=__main_argc_argv
+  -Xlinker --export-if-defined=__main_argc_argv \
+  -Xcc -I$SWIFT_BRIDGING_HEADER
 
 echo "  - Local: http://localhost:3000/Resources/UIFrameworkExample.html"
 
