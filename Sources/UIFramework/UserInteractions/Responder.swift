@@ -1,5 +1,5 @@
 //
-//  UIFramework.swift
+//  Responder.swift
 //  ui-framework
 //
 //  Created by Fang Ling on 2026/3/22.
@@ -17,14 +17,7 @@
 //  limitations under the License.
 //
 
-import FoundationFramework
-
 @MainActor
-private var UIFramework_ViewID: UnsignedInteger32 = 0
-
-@MainActor
-func UIFramework_GetNextViewID() -> UnsignedInteger32 {
-  UIFramework_ViewID += 1
-
-  return UIFramework_ViewID
+open class Responder {
+  var next: Responder?
 }

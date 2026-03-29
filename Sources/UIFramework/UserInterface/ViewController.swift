@@ -1,5 +1,5 @@
 //
-//  Responder.swift
+//  ViewController.swift
 //  ui-framework
 //
 //  Created by Fang Ling on 2026/3/22.
@@ -17,9 +17,36 @@
 //  limitations under the License.
 //
 
-@MainActor
-open class Responder {
-  var next: Responder?
-
-  public init() { }
-}
+//@available(macOS 13.3.0, *)
+//@MainActor open class ViewController: Responder {
+//  var _view: View?
+//
+//  public var view: View! {
+//    get {
+//      loadViewIfNeeded()
+//      return _view
+//    }
+//    set {
+//      _view?.next = nil
+//      _view = newValue
+//      newValue.next = self
+//    }
+//  }
+//
+//  var isViewLoaded: Bool {
+//    return _view != nil
+//  }
+//
+//  func loadView() {
+//    view = View()
+//  }
+//
+//  func loadViewIfNeeded() {
+//    if !isViewLoaded {
+//      loadView()
+//      viewDidLoad()
+//    }
+//  }
+//
+//  open func viewDidLoad() { }
+//}
