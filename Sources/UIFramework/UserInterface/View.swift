@@ -19,6 +19,7 @@
 
 import AnimationFramework
 import FoundationFramework
+import JavaScriptBridgeFramework
 
 @available(macOS 13.3.0, *)
 @MainActor public class View: Responder {
@@ -166,51 +167,8 @@ import FoundationFramework
     self.layer.delegate = self
 
     JavaScriptBridge.initializeElement(
-      elementType: .division,
-      id: self.layer.id
-    )
-  }
-
-  /// Draws the view.
-  ///
-  /// This method is called when a view is first displayed or when an event
-  /// occurs that invalidates a visible part of the view. You should never call
-  /// this method directly yourself. To invalidate part of your view, and thus
-  /// cause that portion to be redrawn, set ``needsDisplay`` to `true` instead.
-  func draw() {
-    if isHidden {
-      JavaScriptBridge.setElementStyleProperty(
-        id: self.layer.id,
-        property: String("display"),
-        value: String("none")
-      )
-    } else {
-      JavaScriptBridge.removeElementStyleProperty(
-        id: self.layer.id,
-        property: String("display")
-      )
-    }
-
-    // Apply the frame
-    JavaScriptBridge.setElementStyleProperty(
-      id: self.layer.id,
-      property: String("left"),
-      value: String("\(frame.origin.x)px")
-    )
-    JavaScriptBridge.setElementStyleProperty(
-      id: self.layer.id,
-      property: String("top"),
-      value: String("\(frame.origin.y)px")
-    )
-    JavaScriptBridge.setElementStyleProperty(
-      id: self.layer.id,
-      property: String("width"),
-      value: String("\(frame.size.width)px")
-    )
-    JavaScriptBridge.setElementStyleProperty(
-      id: self.layer.id,
-      property: String("height"),
-      value: String("\(frame.size.height)px")
+      elementID: self.layer.contents,
+      elementType: .division
     )
   }
 
@@ -231,6 +189,49 @@ import FoundationFramework
   /// the ``layoutIfNeeded()`` method.
   func layoutSubviews() {
     // TODO: Start the constraint pass here
+  }
+
+  func addSubview(_ view: View) {
+    if view.superview !== self {
+      view.removeFromSuperview()
+    }
+
+    subviews.append(view)
+
+    layer.addSublayer(view.layer)
+
+    view.superview = self
+
+    // TODO: Auto Layout
+//    view.needsUpdateConstraints = true
+//    needsUpdateConstraints = true
+  }
+
+  /// Unlinks the view from its superview and its window, and removes it from
+  /// the responder chain.
+  ///
+  /// If the view's superview is not `nil`, the superview releases the view.
+  ///
+  /// Calling this method removes any constraints that refer to the view you are
+  /// removing, or that refer to any view in the subtree of the view you are
+  /// removing.
+  ///
+  /// > Important: Never call this method from inside your view's ``draw()``
+  ///   method.
+  func removeFromSuperview() {
+    guard
+      let index = superview?.subviews.firstIndex(where: { $0 === self })
+    else {
+      return
+    }
+
+    superview?.subviews.remove(at: index)
+
+    superview = nil
+
+    layer.removeFromSuperlayer()
+
+    // TODO: Auto Layout
   }
 
 //  // TODO: Use FoundationFramework's Array
@@ -275,28 +276,6 @@ import FoundationFramework
 //    item: self,
 //    attribute: .height
 //  )
-
-//  public func addSubview(_ view: View) {
-//    if view.superview !== self {
-//      view.removeFromSuperview()
-//    }
-//
-//    subviews.append(view)
-//
-//    view.superview = self
-//
-//    needsDisplay = true
-//  }
-//
-//  func removeFromSuperview() {
-//    guard
-//      let index = superview?.subviews.firstIndex(where: { $0 === self })
-//    else {
-//      return
-//    }
-//
-//    superview?.subviews.remove(at: index)
-//  }
 
 //  func addConstraint(_ constraint: LayoutConstraint) {
 //    constraints.append(constraint)
@@ -473,8 +452,41 @@ import FoundationFramework
 
 @available(macOS 13.3.0, *)
 extension View: @MainActor LayerDelegate {
-  public func draw(_ layer: Layer) {
-    draw()
+  public func display(_ layer: Layer) {
+    if isHidden {
+      JavaScriptBridge.setElementStyleProperty(
+        elementID: layer.contents,
+        property: String("visibility"),
+        value: String("hidden")
+      )
+    } else {
+      JavaScriptBridge.removeElementStyleProperty(
+        elementID: layer.contents,
+        property: String("visibility")
+      )
+    }
+
+    // Apply the frame
+    JavaScriptBridge.setElementStyleProperty(
+      elementID: layer.contents,
+      property: String("left"),
+      value: String("\(frame.origin.x)px")
+    )
+    JavaScriptBridge.setElementStyleProperty(
+      elementID: layer.contents,
+      property: String("top"),
+      value: String("\(frame.origin.y)px")
+    )
+    JavaScriptBridge.setElementStyleProperty(
+      elementID: layer.contents,
+      property: String("width"),
+      value: String("\(frame.size.width)px")
+    )
+    JavaScriptBridge.setElementStyleProperty(
+      elementID: layer.contents,
+      property: String("height"),
+      value: String("\(frame.size.height)px")
+    )
   }
 
   public func layoutSublayers(of layer: Layer) {
